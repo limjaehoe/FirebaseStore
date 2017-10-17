@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Button read_button;
     private Button data_model;
     private Button add_data;
+    private Button a;
 
 
 
