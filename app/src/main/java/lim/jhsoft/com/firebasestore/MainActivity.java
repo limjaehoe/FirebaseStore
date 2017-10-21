@@ -1,20 +1,27 @@
 package lim.jhsoft.com.firebasestore;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
@@ -22,19 +29,17 @@ import com.google.firebase.firestore.WriteBatch;
 import java.util.HashMap;
 import java.util.Map;
 
+import lim.jhsoft.com.firebasestore.model.CitiesSfDTO;
+
 public class MainActivity extends AppCompatActivity {
-
     static final String TAG = "firestore";
-    private Button write_button;
-    private Button read_button;
-    private Button data_model;
-    private Button add_data;
-    private Button update_data;
-    private Button transcation1;
-    private Button transcation2;
-    private Button transcation3;
-    private Button delete1;
-
+    private Button AddandManageData;
+    private Button Query_getdata;
+    private Button queryRealitimeUpdate;
+    private TextView  queryRealitimeUpdateText;
+    private Button queryRealitimeUpdateAdd;
+    private Button queryViewChangeBetweenSnapshots;
+    private Button performSimpleAndCompoundQueries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,145 +47,54 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        write_button = findViewById(R.id.write_button);
-        read_button = findViewById(R.id.read_button);
-        data_model = findViewById(R.id.data_model);
-        add_data = findViewById(R.id.add_data);
-        update_data = findViewById(R.id.update_data);
-        transcation1 = findViewById(R.id.transactions1);
-        transcation2 = findViewById(R.id.transactions2);
-        transcation3 = findViewById(R.id.transactions3);
-        delete1 = findViewById(R.id.delete1);
+
+        AddandManageData = findViewById(R.id.AddandManageData);
+        Query_getdata = findViewById(R.id.Query_getdata);
+        queryRealitimeUpdate = findViewById(R.id.query_realitime_update);
+        queryRealitimeUpdateText = findViewById(R.id.query_realitime_update_text);
+        queryViewChangeBetweenSnapshots = findViewById(R.id.query_view_change_between_snapshots);
+        queryRealitimeUpdateAdd = findViewById(R.id.query_realitime_update_add);
+        performSimpleAndCompoundQueries = findViewById(R.id.perform_simple_and_compound_queries);
 
 
-
-
-
-        write_button.setOnClickListener(new View.OnClickListener() {
+        AddandManageData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Map<String, Object> user = new HashMap<>();
-                user.put("first", "Ada");
-                user.put("last", "Lovelace");
-                user.put("born", 1815);
-
-                // Add a new document with a generated ID
-                db.collection("users")
-                        .add(user)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error adding document", e);
-                            }
-                        });
-
+                Intent intent = new Intent(getApplicationContext(), AddandManageDataActivity.class);
+                startActivity(intent);
             }
         });
 
-
-        read_button.setOnClickListener(new View.OnClickListener() {
+        queryRealitimeUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                db.collection("users")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (DocumentSnapshot document : task.getResult()) {
-                                        Log.d(TAG, document.getId() + " => " + document.getData());
-                                    }
-                                } else {
-                                    Log.w(TAG, "Error getting documents.", task.getException());
-                                }
-                            }
-                        });
+                final DocumentReference docRef = db.collection("cities").document("SF");
+                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                        @Nullable FirebaseFirestoreException e) {
+
+                        //CitiesSfDTO citiesSfDTO = (CitiesSfDTO) snapshot.getData();
+                        //System.out.println(citiesSfDTO.population);
+
+
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
+                            queryRealitimeUpdateText.setText(snapshot.getData().toString());
+                            Log.d(TAG, "Current data: " + snapshot.getData());
+                        } else {
+                            Log.d(TAG, "Current data: null");
+                        }
+                    }
+                });
             }
         });
 
-        data_model.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Map<String, Object> user = new HashMap<>();
-                user.put("first", "Ada");
-                user.put("last", "Lovelace");
-                user.put("born", 1815);
-
-                // Add a new document with a generated ID
-                db.collection("users").document("a1").collection("a2")
-                        .add(user)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error adding document", e);
-                            }
-                        });
-            }
-        });
-
-
-        add_data.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Map<String, Object> city = new HashMap<>();
-                city.put("name", "Los Angeles");
-                city.put("state", "CA");
-                city.put("country", "USA");
-
-                db.collection("cities").document("LA")
-                        .set(city)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully written!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error writing document", e);
-                            }
-                        });
-            }
-        });
-
-        //업데이트..
-        update_data.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DocumentReference washingtonRef = db.collection("cities").document("LA");
-
-                // Set the "isCapital" field of the city 'DC'
-                washingtonRef
-                        .update("capital", false)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully updated!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error updating document", e);
-                            }
-                        });
-            }
-        });
-
-        transcation1.setOnClickListener(new View.OnClickListener() {
+        queryRealitimeUpdateAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final DocumentReference sfDocRef = db.collection("cities").document("SF");
@@ -207,77 +121,101 @@ public class MainActivity extends AppCompatActivity {
                                 Log.w(TAG, "Transaction failure.", e);
                             }
                         });
-
             }
         });
 
-        transcation2.setOnClickListener(new View.OnClickListener() {
+        queryViewChangeBetweenSnapshots.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final DocumentReference sfDocRef = db.collection("cities").document("SF");
-
-                db.runTransaction(new Transaction.Function<Double>() {
-                    @Override
-                    public Double apply(Transaction transaction) throws FirebaseFirestoreException {
-                        DocumentSnapshot snapshot = transaction.get(sfDocRef);
-                        double newPopulation = snapshot.getDouble("population") + 1;
-                        if (newPopulation <= 1000000) {
-                            transaction.update(sfDocRef, "population", newPopulation);
-                            return newPopulation;
-                        } else {
-                            throw new FirebaseFirestoreException("Population too high",
-                                    FirebaseFirestoreException.Code.ABORTED);
-                        }
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<Double>() {
-                    @Override
-                    public void onSuccess(Double result) {
-                        Log.d(TAG, "Transaction success: " + result);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Transaction failure.", e);
-                    }
-                });
-            }
-        });
-
-        transcation3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                WriteBatch batch = db.batch();
-                // Set the value of 'NYC'
-                // Update the population of 'SF'
-                DocumentReference laRef = db.collection("cities").document("LA");
-                batch.delete(laRef);
-
-
-            }
-        });
-
-        delete1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                db.collection("cities").document("DC")
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                db.collection("cities")
+                        .whereEqualTo("state", "CA")
+                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error deleting document", e);
+                            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                                @Nullable FirebaseFirestoreException e) {
+                                if (e != null) {
+                                    Log.w(TAG, "listen:error", e);
+                                    return;
+                                }
+
+                                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                                    switch (dc.getType()) {
+                                        case ADDED:
+                                            Log.d(TAG, "New city: " + dc.getDocument().getData());
+                                            break;
+                                        case MODIFIED:
+                                            Log.d(TAG, "Modified city: " + dc.getDocument().getData());
+                                            break;
+                                        case REMOVED:
+                                            Log.d(TAG, "Removed city: " + dc.getDocument().getData());
+                                            break;
+                                    }
+                                }
+
                             }
                         });
             }
         });
 
+        performSimpleAndCompoundQueries.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*CollectionReference cities = db.collection("cities");
 
+                Map<String, Object> data1 = new HashMap<>();
+                data1.put("name", "San Francisco");
+                data1.put("state", "CA");
+                data1.put("country", "USA");
+                data1.put("capital", false);
+                data1.put("population", 860000);
+                cities.document("SF").set(data1);
+
+                Map<String, Object> data2 = new HashMap<>();
+                data2.put("name", "Los Angeles");
+                data2.put("state", "CA");
+                data2.put("country", "USA");
+                data2.put("capital", false);
+                data2.put("population", 3900000);
+                cities.document("LA").set(data2);
+
+                Map<String, Object> data3 = new HashMap<>();
+                data3.put("name", "Washington D.C.");
+                data3.put("state", null);
+                data3.put("country", "USA");
+                data3.put("capital", true);
+                data3.put("population", 680000);
+                cities.document("DC").set(data3);
+
+                Map<String, Object> data4 = new HashMap<>();
+                data4.put("name", "Tokyo");
+                data4.put("state", null);
+                data4.put("country", "Japan");
+                data4.put("capital", true);
+                data4.put("population", 9000000);
+                cities.document("TOK").set(data4);
+
+                Map<String, Object> data5 = new HashMap<>();
+                data5.put("name", "Beijing");
+                data5.put("state", null);
+                data5.put("country", "China");
+                data5.put("capital", true);
+                data5.put("population", 21500000);
+                cities.document("BJ").set(data5);*/
+
+                // Create a reference to the cities collection
+                CollectionReference citiesRef = db.collection("cities");
+
+// Create a query against the collection.
+                Query query = citiesRef.whereEqualTo("state", "CA");
+                Query capitalCities = db.collection("cities").whereEqualTo("capital", true);
+
+                citiesRef.whereEqualTo("state", "CA");
+                citiesRef.whereLessThan("population", 100000);
+                citiesRef.whereGreaterThanOrEqualTo("name", "San Francisco");
+
+
+            }
+        });
 
 
     }

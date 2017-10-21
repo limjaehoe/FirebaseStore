@@ -18,50 +18,68 @@
 
 
 
-
-            <Button
-                android:text="AddandManageData"
-                android:id="@+id/AddandManageData"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-
-            <Button
-                android:text="Query_getdata"
-                android:id="@+id/Query_getdata"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:text="query_realitime_update"
-                android:id="@+id/query_realitime_update"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
             <TextView
-                android:text="aa"
-                android:id="@+id/query_realitime_update_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello World!"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:text="쓰기"
+                android:id="@+id/write_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <Button
-                android:text="숫자증가 + 통신"
-                android:id="@+id/query_realitime_update_add"
+                android:text="읽기"
+                android:id="@+id/read_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <Button
-                android:text="query_view_change_between_snapshots"
-                android:id="@+id/query_view_change_between_snapshots"
+                android:text="data_model"
+                android:id="@+id/data_model"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <Button
-                android:text="perform_simple_and_compound_queries"
-                android:id="@+id/perform_simple_and_compound_queries"
+                android:text="add_data"
+                android:id="@+id/add_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
+            <Button
+                android:text="update_data"
+                android:id="@+id/update_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="transactions1"
+                android:id="@+id/transactions1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="transactions2"
+                android:id="@+id/transactions2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="transactions3"
+                android:id="@+id/transactions3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="delete1"
+                android:id="@+id/delete1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
 
 
