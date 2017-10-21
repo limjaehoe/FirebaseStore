@@ -7,6 +7,17 @@
     android:orientation="vertical"
     tools:context="lim.jhsoft.com.firebasestore.MainActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,4 +51,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:text="update_data"
+        android:id="@+id/update_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="transactions1"
+        android:id="@+id/transactions1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="transactions2"
+        android:id="@+id/transactions2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="transactions3"
+        android:id="@+id/transactions3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+    android:text="delete1"
+    android:id="@+id/delete1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+
+
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
